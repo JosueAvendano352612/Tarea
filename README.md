@@ -25,4 +25,12 @@ Alma Citlali Velez Gutierrez:
       Entregar el trabajo código final ya funcional.
 
 Jessica Alexandra Magaña Salcedo:
-  
+Frontend:
+Commit 1: 29 de feb:
+  Diseño inicial y generacion del laberinto 
+Commit 2: 4 de marzo:
+  Implementacion del movimiento del usuario 
+Commit 3: 7 de marzo:
+  Interfaz del usuario y creacion de ventanas para quiz
+Commit 4: 4 y final 11 de marzo: 
+  Realizar las pruebas y corregir errores
