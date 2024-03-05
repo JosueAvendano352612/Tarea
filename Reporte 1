@@ -1,0 +1,49 @@
+Reporte 04/03/2024
+
+En el Backend: se ha implementado la funcionalidad básica de búsqueda de ruta en un entorno de matriz con obstáculos. Además, se ha integrado un sistema interactivo de trivia que se activa durante la búsqueda de la ruta, ofreciendo preguntas educativas al usuario.
+
+Detalles de los Cambios:
+
+Creación de Matriz:
+
+Se ha agregado la función crear_matriz(filas, columnas) para generar una matriz cuadrada con obstáculos y valores aleatorios.
+Se emplea un enfoque aleatorio para colocar obstáculos y asignar valores diferentes a las celdas restantes.
+Búsqueda de Ruta:
+
+La función ruta_salida(matriz) utiliza el enfoque de búsqueda en profundidad (DFS) para encontrar una ruta desde la esquina superior izquierda hasta la salida (celda con valor 2).
+La matriz visitado rastrea las celdas ya visitadas durante la búsqueda.
+Se ha incluido un mecanismo para iniciar una trivia interactiva cuando se encuentra una celda con valor 111.
+Trivia:
+
+Se ha introducido la función trivia() para presentar preguntas de trivia al usuario durante la búsqueda.
+El usuario debe responder correctamente para avanzar en la búsqueda de la ruta.
+Ejemplo de Uso:
+
+Se muestra un ejemplo de uso en el que se genera una matriz, se realiza la búsqueda de la ruta y se activa la trivia durante el proceso.
+Próximos Pasos:
+
+Se sugiere la optimización de la búsqueda de ruta y la expansión del conjunto de preguntas de trivia para ofrecer una experiencia más completa.
+Posibles mejoras incluyen la implementación de una interfaz gráfica y la incorporación de feedback visuales durante la búsqueda.
+
+Y en el Frontend: se ha añadido la implementación básica de un laberinto interactivo utilizando la biblioteca Pygame en Python. Se ha creado un laberinto aleatorio con una salida marcada en rojo y un jugador que se puede mover mediante las teclas de dirección.
+
+Detalles de los Cambios:
+
+Creación del Laberinto:
+
+Se ha implementado la función crear_laberinto() para generar un laberinto con paredes y pasillos mediante el algoritmo de generación de laberintos.
+Dibujo del Laberinto:
+
+La función dibujar_laberinto(laberinto) se encarga de dibujar el laberinto en la ventana de Pygame. Las paredes se representan en negro, la salida en rojo y los pasillos en blanco.
+Movimiento del Jugador:
+
+La función mover_jugador(dx, dy) permite mover al jugador en el laberinto. Se ha implementado un sistema que evita que el jugador se mueva a través de las paredes.
+Bucle Principal:
+
+Se ha establecido un bucle principal que maneja eventos de teclado para mover al jugador en respuesta a las teclas de dirección.
+Configuración de Pygame:
+
+Se ha inicializado Pygame y configurado la ventana con dimensiones basadas en el tamaño del laberinto.
+Ejemplo de Uso:
+
+El jugador puede moverse con las teclas de dirección para explorar el laberinto y alcanzar la salida.
