@@ -1,0 +1,147 @@
+import random
+import time
+
+def crear_matriz(filas, columnas):
+    numeros = [0, 1, 2, 3, 4, 55, 111]  # Valores negativos para representar obstáculos y salida
+    matriz = [[0 for _ in range(columnas)] for _ in range(filas)]
+    matriz[0][0] = 0
+
+    for num in [2, 3, 4, 55, 111]:  # Salida y obstáculos
+        fila = random.randint(0, filas - 1)
+        columna = random.randint(0, columnas - 1)
+        while matriz[fila][columna] != 0:
+            fila = random.randint(0, filas - 1)
+            columna = random.randint(0, columnas - 1)
+        matriz[fila][columna] = num
+
+    for i in range(filas):
+        for j in range(columnas):
+            if matriz[i][j] == 0 and (i, j) != (0, 0):
+                matriz[i][j] = random.choice([num for num in numeros if num not in [2, 3, 4, 55, 111]])
+
+    return matriz
+
+def trivia():
+    preguntas = [
+        ("¿Qué es un algoritmo?\na) Un conjunto ordenado de operaciones sistemáticas que permite hacer un cálculo y hallar la solución a un problema\nb) Un tipo de software\nc) Una función específica de hardware", "a"),
+        ("¿Cuál de los siguientes NO es un tipo de algoritmo de búsqueda?\na) Búsqueda lineal\nb) Búsqueda binaria\nc) Algoritmo de Dijkstra", "c"),
+        ("¿En qué consiste el algoritmo de ordenamiento Bubble Sort?\na) Dividir el conjunto de elementos en partes cada vez más pequeñas\nb) Seleccionar el elemento más pequeño y colocarlo al inicio\nc) Intercambiar repetidamente elementos adyacentes si están en el orden incorrecto", "c"),
+        ("¿Cuál es la complejidad de tiempo en el peor caso del algoritmo de búsqueda binaria?\na) O(n)\nb) O(log n)\nc) O(n^2)", "b"),
+        ("¿Qué afirmación describe mejor el algoritmo de QuickSort?\na) Ordena los elementos eligiendo un 'pivote' y dividiendo el conjunto en dos, ordenando luego esas dos partes de forma independiente\nb) Intercambia elementos adyacentes si están en desorden, repitiendo el proceso hasta que no se necesiten más intercambios\nc) Construye un árbol binario de búsqueda y luego realiza un recorrido en orden para obtener los elementos ordenados", "a"),
+        ("¿Qué es la recursividad en la programación?\na) Un bucle que se repite un número fijo de veces\nb) Un enfoque que divide un problema en subproblemas más pequeños, resolviendo cada uno de ellos de manera recursiva\nc) Una técnica para ordenar elementos en una lista", "b"),
+        ("¿Qué es la complejidad de tiempo en el peor caso del algoritmo de búsqueda lineal?\na) O(n)\nb) O(log n)\nc) O(n log n)", "a"),
+        ("¿Cuál de las siguientes opciones describe mejor el concepto de 'dividir para conquistar' en algoritmos?\na) Un enfoque que utiliza bucles para repetir una tarea hasta que se cumpla una condición de salida\nb) Un enfoque que divide un problema en subproblemas más pequeños, resolviendo cada uno de manera independiente y luego combinando las soluciones\nc) Un enfoque que utiliza técnicas de selección para elegir la mejor opción en cada paso", "b"),
+        ("¿Cuál es el objetivo principal del algoritmo de ordenamiento QuickSort?\na) Ordenar los elementos eligiendo un 'pivote' y dividiendo el conjunto en dos, ordenando luego esas dos partes de forma independiente\nb) Intercambiar elementos adyacentes si están en desorden, repitiendo el proceso hasta que no se necesiten más intercambios\nc) Construir un árbol binario de búsqueda y luego realizar un recorrido en orden para obtener los elementos ordenados", "a"),
+        ("¿Cuál fue una de las contribuciones más destacadas de Alan Turing al campo de la computación durante la Segunda Guerra Mundial?\na) Formuló el concepto de la máquina de Turing, un modelo teórico de computación\nb) Descifró los códigos de la máquina Enigma utilizados por las fuerzas alemanas\nc) Creó el primer lenguaje de programación de alto nivel", "b")
+    ]
+    
+    pregunta, respuesta_correcta = random.choice(preguntas)
+    while True:
+        print(pregunta)
+        respuesta_usuario = input("Ingrese la letra de la respuesta correcta: ").strip().lower()
+        if respuesta_usuario == respuesta_correcta:
+            print("¡Respuesta correcta!\n")
+            break
+        else:
+            print("Respuesta incorrecta. Inténtalo de nuevo.\n")
+
+def adivinanzas():
+    adivinanzas = [
+        ("Quien lo fabrica, no lo necesita. Quien lo compra, no lo necesita. Quien lo usa, no lo ve ni lo siente. ¿Qué es?", "un ataúd"),
+        ("¿Cuáles son las tres letras siguientes de esta combinación? UDTCCSS...", "ond"),
+        ("¿Qué es lo que nadie quiere, pero nadie quiere perder?", "un pleito"),
+        ("¿Cómo suman ocho ochos mil?", "888 + 88 + 8 + 8 + 8 = 1000"),
+        ("Vengo y voy, voy y vengo dejando blanco lo que era negro.", "un borrador"),
+        ("¿Qué tiene muchos corazones y ningún órgano?", "una baraja de cartas"),
+        ("Un platito de avellanas que de día se recogen y de noche se desparraman.", "las estrellas"),
+        ("Una caja blanquita como la cal, todos la saben abrir, nadie la sabe cerrar.", "el huevo"),
+        ("Tengo ojos pero no veo, agua pero no bebo y barba pero no me afeito. ¿Quién soy?", "el coco")
+    ]
+
+    adivina, respuesta_correcta = random.choice(adivinanzas)
+    while True:
+        respuesta_usuario = input(adivina + "\nRespuesta: ").strip().lower()
+        if respuesta_usuario == respuesta_correcta:
+            print("¡Respuesta correcta!\n")
+            break
+        else:
+            print("Respuesta incorrecta. Inténtalo de nuevo.\n")
+
+def buscar_salida(fila_actual, columna_actual, fila_destino, columna_destino):
+    # Verifica si la posición actual está fuera de los límites del laberinto
+    if fila_actual < 0 or fila_actual >= filas or columna_actual < 0 or columna_actual >= columnas:
+        return False
+
+    # Verifica si la posición actual ya ha sido visitada o es un obstáculo
+    if visitado[fila_actual][columna_actual] or matriz[fila_actual][columna_actual] == 1:
+        return False
+    
+    # Verifica si la posición actual es la salida
+    if matriz[fila_actual][columna_actual] == 2:
+        ruta.append((fila_actual, columna_actual))
+        return True
+
+    # Marca la posición actual como visitada
+    visitado[fila_actual][columna_actual] = True
+
+    # Movimientos en términos de filas y columnas
+    # Divide el problema en términos de filas y columnas, explorando celdas adyacentes en cada dirección
+    if fila_actual < fila_destino:
+        if buscar_salida(fila_actual + 1, columna_actual, fila_destino, columna_destino):
+            # Si se encuentra una solución, se agrega la posición actual a la ruta y se retorna True
+            ruta.append((fila_actual, columna_actual))
+            return True
+    elif fila_actual > fila_destino:
+        if buscar_salida(fila_actual - 1, columna_actual, fila_destino, columna_destino):
+            ruta.append((fila_actual, columna_actual))
+            return True
+
+    if columna_actual < columna_destino:
+        if buscar_salida(fila_actual, columna_actual + 1, fila_destino, columna_destino):
+            ruta.append((fila_actual, columna_actual))
+            return True
+    elif columna_actual > columna_destino:
+        if buscar_salida(fila_actual, columna_actual - 1, fila_destino, columna_destino):
+            ruta.append((fila_actual, columna_actual))
+            return True
+
+    # No se encontró la salida desde esta posición
+    return False
+
+def ruta_salida(matriz):
+    global filas, columnas, visitado, ruta
+    filas = len(matriz)
+    columnas = len(matriz[0])
+    visitado = [[False for _ in range(columnas)] for _ in range(filas)]
+    ruta = []
+
+    imprimir_matriz(matriz)
+
+    if buscar_salida(0, 0, filas - 1, columnas - 1):
+        contador_preguntas = 0
+        for fila, columna in reversed(ruta):  # Invertir la lista antes de imprimir
+            if matriz[fila][columna] == 111:
+                trivia()
+                contador_preguntas += 1
+            elif matriz[fila][columna] == 55:
+                adivinanzas()
+            print(f"({fila}, {columna})")
+            time.sleep(0.5)
+        for fila, columna in ruta:
+            if matriz[fila][columna] == 2:
+                print(f"Coordenada de la salida: ({fila}, {columna})")
+                
+        print("¡Has llegado a la salida!")
+    else:
+        print("No se encontró una ruta hacia la salida.")
+
+def imprimir_matriz(matriz):
+    for fila in matriz:
+        fila_str = ""
+        for celda in fila:
+            fila_str += "{:5}".format(celda)
+        print(fila_str)
+
+# Ejemplo
+matriz = crear_matriz(8, 8)
+ruta_salida(matriz)
