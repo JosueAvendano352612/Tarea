@@ -1,0 +1,489 @@
+import pygame
+import random
+import sys
+
+# Colores
+BLANCO = (255, 255, 255)
+NEGRO = (0, 0, 0)
+ROJO = (255, 0, 0)
+VERDE = (0, 255, 0)
+AMARILLO = (255, 255, 0)
+AZUL = (0, 0, 255)
+CIAN = (0,255,255)
+GRIS = (128,128,128)
+
+
+
+def crear_matriz(filas, columnas):
+    
+    matriz = [[0 for _ in range(columnas)] for _ in range(filas)]
+    
+    # Contador para el número de celdas con valor 1
+    celdas_con_uno = 0
+    
+    # Colocar entrada en la posición (0, 0)
+    matriz[0][0] = 0
+    
+    # Salida y obstáculos
+    for num in [2, 3, 4, 55, 111]:
+        fila = random.randint(0, filas - 1)
+        columna = random.randint(0, columnas - 1)
+        if matriz[fila][columna] == 0:
+            matriz[fila][columna] = num
+    
+    # Colocar 10 celdas con valor 1
+    while celdas_con_uno < 25:
+        fila = random.randint(0, filas - 1)
+        columna = random.randint(0, columnas - 1)
+        
+        if matriz[fila][columna] == 0:
+            matriz[fila][columna] = 1
+            celdas_con_uno += 1
+    
+    return matriz
+
+
+def ventana_adivina(pregunta, respuesta_correcta):
+    # Definir dimensiones de la ventana
+    ANCHO = 900
+    ALTO = 600
+
+    # Crear la ventana
+    ventana = pygame.display.set_mode((ANCHO, ALTO))
+    pygame.display.set_caption("Trivia")
+
+    # Definir la fuente
+    fuente = pygame.font.Font(None, 28)
+
+    # Mostrar la pregunta
+    ventana.fill(BLANCO)
+    pregunta_surface = fuente.render(pregunta, True, NEGRO)
+    ventana.blit(pregunta_surface, (ANCHO // 2 - pregunta_surface.get_width() // 2, 50))
+    pygame.display.flip()
+
+    # Capturar respuesta del usuario
+    respuesta_usuario = ""
+    texto_usuario = ""
+    while True:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_ESCAPE:
+                    return  # Cerrar ventana si se presiona escape
+                elif evento.key == pygame.K_RETURN:
+                    if respuesta_usuario.lower() == respuesta_correcta.lower():
+                        mensaje = "¡Respuesta correcta!"
+                        color = (0, 255, 0)  # Verde para respuesta correcta
+                    else:
+                        mensaje = "Respuesta incorrecta. Intenta de nuevo."
+                        color = (255, 0, 0)  # Rojo para respuesta incorrecta
+
+                    # Mostrar mensaje en la ventana
+                    mensaje_surface = fuente.render(mensaje, True, color)
+                    ventana.blit(mensaje_surface, (ANCHO // 2 - mensaje_surface.get_width() // 2, 500))
+                    pygame.display.flip()
+
+                    # Esperar un momento antes de continuar
+                    pygame.time.wait(2000)
+
+                    # Si la respuesta es correcta, salir del bucle
+                    if respuesta_usuario.lower() == respuesta_correcta.lower():
+                        return
+                    else:
+                        # Limpiar respuesta del usuario para intentar de nuevo
+                        respuesta_usuario = ""
+                        texto_usuario = ""
+                elif evento.key == pygame.K_BACKSPACE:
+                    texto_usuario = texto_usuario[:-1]
+                else:
+                    texto_usuario += evento.unicode
+
+        # Mostrar texto ingresado por el usuario
+        ventana.fill(BLANCO)
+        pregunta_surface = fuente.render(pregunta, True, NEGRO)
+        ventana.blit(pregunta_surface, (ANCHO // 2 - pregunta_surface.get_width() // 2, 50))
+        texto_surface = fuente.render(texto_usuario, True, NEGRO)
+        ventana.blit(texto_surface, (ANCHO // 2 - texto_surface.get_width() // 2, 150))
+        pygame.display.flip()
+
+        respuesta_usuario = texto_usuario
+
+
+def adivina():
+    lista_adivinanzas = [
+        ("¿Cuáles son las tres letras siguientes de esta combinación? UDTCCSS...", "ond"),
+        ("¿Qué es lo que nadie quiere, pero nadie quiere perder?", "un pleito"),
+        ("Vengo y voy, voy y vengo dejando blanco lo que era negro.", "un borrador"),
+        ("¿Qué tiene muchos corazones y ningún órgano?", "una baraja de cartas"),
+        ("Un platito de avellanas que de día se recogen y de noche se desparraman.", "las estrellas"),
+        ("Una caja blanquita como la cal, todos la saben abrir, nadie la sabe cerrar.", "el huevo"),
+        ("Tengo ojos pero no veo, agua pero no bebo y barba pero no me afeito. ¿Quién soy?", "el coco")
+    ]
+
+    # Se selecciona una pregunta aleatoriamente
+    adivinar, respuesta_correcta = random.choice(lista_adivinanzas)
+
+    # Llamar a la función para mostrar la ventana de la trivia
+    ventana_adivina(adivinar, respuesta_correcta)
+    
+def ventana_trivia(pregunta, opciones, respuesta_correcta):
+    # Definir dimensiones de la ventana
+    ANCHO = 900
+    ALTO = 600
+
+    # Crear la ventana
+    ventana = pygame.display.set_mode((ANCHO, ALTO))
+    pygame.display.set_caption("Trivia")
+
+    # Definir colores
+    NEGRO = (0, 0, 0)
+    BLANCO = (255, 255, 255)
+    AZUL = (0, 0, 255)
+
+    # Definir la fuente
+    fuente = pygame.font.Font(None, 28)
+
+    # Mostrar la pregunta y opciones
+    ventana.fill(BLANCO)
+    pregunta_surface = fuente.render(pregunta, True, NEGRO)
+    ventana.blit(pregunta_surface, (ANCHO // 2 - pregunta_surface.get_width() // 2, 50))
+
+    y_pos = 150
+    for opcion in opciones:
+        opcion_surface = fuente.render(opcion, True, NEGRO)
+        ventana.blit(opcion_surface, (ANCHO // 2 - opcion_surface.get_width() // 2, y_pos))
+        y_pos += opcion_surface.get_height() + 10
+
+    pygame.display.flip()
+
+    # Esperar la respuesta del usuario
+    while True:
+        # Mostrar la pregunta y opciones
+        ventana.fill(BLANCO)
+        pregunta_surface = fuente.render(pregunta, True, NEGRO)
+        ventana.blit(pregunta_surface, (ANCHO // 2 - pregunta_surface.get_width() // 2, 50))
+
+        y_pos = 150
+        for opcion in opciones:
+            opcion_surface = fuente.render(opcion, True, NEGRO)
+            ventana.blit(opcion_surface, (ANCHO // 2 - opcion_surface.get_width() // 2, y_pos))
+            y_pos += opcion_surface.get_height() + 10
+
+        pygame.display.flip()
+
+        # Esperar la respuesta del usuario
+        respuesta_usuario = None
+        while respuesta_usuario is None:
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif evento.type == pygame.KEYDOWN:
+                    if evento.key == pygame.K_ESCAPE:
+                        return  # Cerrar ventana si se presiona escape
+                    elif evento.key in [pygame.K_a, pygame.K_b, pygame.K_c]:
+                        # Asignar la respuesta del usuario
+                        if evento.key == pygame.K_a:
+                            respuesta_usuario = "a"
+                        elif evento.key == pygame.K_b:
+                            respuesta_usuario = "b"
+                        elif evento.key == pygame.K_c:
+                            respuesta_usuario = "c"
+
+        # Verificar si la respuesta es correcta
+        if respuesta_usuario == respuesta_correcta:
+            mensaje = "¡Respuesta correcta!"
+            color = (0, 255, 0)  # Verde para respuesta correcta
+        else:
+            mensaje = "Respuesta incorrecta. Intenta de nuevo."
+            color = (255, 0, 0)  # Rojo para respuesta incorrecta
+
+        # Mostrar mensaje en la ventana
+        mensaje_surface = fuente.render(mensaje, True, color)
+        ventana.blit(mensaje_surface, (ANCHO // 2 - mensaje_surface.get_width() // 2, 500))
+        pygame.display.flip()
+
+        # Esperar un momento antes de continuar
+        pygame.time.wait(2000)
+
+        # Si la respuesta es correcta, salir del bucle
+        if respuesta_usuario == respuesta_correcta:
+            break
+
+def trivia():
+    preguntas = [
+        
+        ("¿Cuál de los siguientes NO es un tipo de algoritmo de búsqueda?", ["a) Búsqueda lineal", "b) Búsqueda binaria", "c) Algoritmo de Dijkstra"], "c"),
+        ("¿En qué consiste el algoritmo de ordenamiento Bubble Sort?", ["a) Dividir el conjunto de elementos en partes cada vez más pequeñas", "b) Seleccionar el elemento más pequeño y colocarlo al inicio", "c) Intercambiar repetidamente elementos adyacentes si están en el orden incorrecto"], "c"),
+        ("¿Cuál es la complejidad de tiempo en el peor caso del algoritmo de búsqueda binaria?", ["a) O(n)", "b) O(log n)", "c) O(n^2)"], "b"),
+        ("¿Qué es la recursividad en la programación?", ["a) Un bucle que se repite un número fijo de veces", "b) Divide un problema en subproblemas más pequeños, resolviendo  de manera recursiva", "c) Una técnica para ordenar elementos en una lista"], "b"),
+        ("¿Qué es la complejidad de tiempo en el peor caso del algoritmo de búsqueda lineal?", ["a) O(n)", "b) O(log n)", "c) O(n log n)"], "a"),
+    ]
+
+    # Se selecciona una pregunta aleatoriamente
+    pregunta, opciones, respuesta_correcta = random.choice(preguntas)
+
+    # Llamar a la función para mostrar la ventana de la trivia
+    ventana_trivia(pregunta, opciones, respuesta_correcta)
+
+def buscar_salida(matriz, visitado, ruta, fila_actual, columna_actual, fila_destino, columna_destino):
+    # Verifica si la posición actual está fuera de los límites del laberinto si es asi retorna false
+    if fila_actual < 0 or fila_actual >= len(matriz) or columna_actual < 0 or columna_actual >= len(matriz[0]):
+        return False
+
+    # Verifica si la posición actual ya ha sido visitada o es un obstáculo o si es una pared indica que no se puede pasar por ahí
+    if visitado[fila_actual][columna_actual] or matriz[fila_actual][columna_actual] == 1:
+        return False
+    
+    # Verifica si la posición actual es la salida si es asi agrega la posición actual a la ruta y retorna True indicando que encontro la salida
+    if matriz[fila_actual][columna_actual] == 2:
+        ruta.insert(0, (fila_actual, columna_actual))  # Agrega al principio de la lista
+        return True
+    
+    # Verifica si la posición actual es un 3 o 4
+    if matriz[fila_actual][columna_actual] == 3 or matriz[fila_actual][columna_actual] == 4:
+        # Encuentra las coordenadas de la celda con el valor opuesto
+        fila_cambiar, columna_cambiar = encontrar_tres_cuatro(matriz, fila_actual, columna_actual)
+        # Intercambia las posiciones
+        fila_actual, columna_actual = fila_cambiar, columna_cambiar
+
+    # Marca la posición actual como visitada
+    visitado[fila_actual][columna_actual] = True
+
+    # Movimientos en términos de filas y columnas
+    # Divide el problema en  filas y columnas explorando celdas adyacentes en cada dirección (arriba, abajo, izquierda y derecha)
+    #Verifica si la fila actual es menor a la fila en la que esta la salida sirve para saber a que dirección nos podemos mover
+    if fila_actual < fila_destino:
+        #Si es menor significa que podemos movernos hacia abajo para acercarnos a la salida es por eso que se pone fila_actual + 1
+        if buscar_salida(matriz, visitado, ruta, fila_actual + 1, columna_actual, fila_destino, columna_destino):
+            # Si se encuentra una solución, se agrega la posición actual a la ruta (lista) y se retorna True
+            ruta.insert(0, (fila_actual, columna_actual))  # Agrega al principio de la lista
+            return True
+    #Verifica si la fila actual es mayor que la fila en la que se encuentra la salida significa que estammos por encima de la fila que queremos llegar
+    elif fila_actual > fila_destino:
+        #Podemos movernos hacia arriba para acercarnos a la salida y para eso ponemos fila_actual - 1
+        if buscar_salida(matriz, visitado, ruta, fila_actual - 1, columna_actual, fila_destino, columna_destino):
+            # Si se encuentra una solución, se agrega la posición actual a la ruta (lista) y se retorna True
+            ruta.insert(0, (fila_actual, columna_actual))  # Agrega al principio de la lista
+            return True
+
+    #Si la columna_actual es menor a la columna donde esta la salida significa que podemos movernos a la derecha
+    if columna_actual < columna_destino:
+        #Intentamos mover hacia la derecha con la columna actual incrementada + 1
+        if buscar_salida(matriz, visitado, ruta, fila_actual, columna_actual + 1, fila_destino, columna_destino):
+            # Si se encuentra una solución, se agrega la posición actual a la ruta (lista) y se retorna True
+            ruta.insert(0, (fila_actual, columna_actual))  # Agrega al principio de la lista
+            return True
+    
+    #Si la columna actual es mayor que la columna donde esta la salida podemos movernos a la izquierda
+    elif columna_actual > columna_destino:
+        #Intentamos movernos a la izquierda con la columa actual - 1
+        if buscar_salida(matriz, visitado, ruta, fila_actual, columna_actual - 1, fila_destino, columna_destino):
+            # Si se encuentra una solución, se agrega la posición actual a la ruta (lista) y se retorna True
+            ruta.insert(0, (fila_actual, columna_actual))  # Agrega al principio de la lista
+            return True
+
+    # No se encontró la salida desde esta posición
+    return False
+
+
+def encontrar_tres_cuatro(matriz, fila_actual, columna_actual):
+    # Se obtiene el valor de la celda con las coordenadas
+    valor = matriz[fila_actual][columna_actual]
+    
+    # Si el valor es igual a 3 cambia con el 4
+    if valor == 3:
+        cambiar = 4
+    
+    # Si el valor es igual a 4 cambia con el 3
+    elif valor == 4:
+        cambiar = 3
+    
+    # Busca la coordenada del valor opuesto en la matriz
+    for fila in range(len(matriz)):
+        for columna in range(len(matriz[0])):
+            if matriz[fila][columna] == cambiar:
+                # Devuelve la fila y columna de la celda con la que se va a cambiar
+                return fila, columna
+            
+    # Si no se encuentra ninguna celda con el valor opuesto, devuelve None
+    return None, None  # Devolver una tupla con None en lugar de solo None
+
+            
+def ruta_salida(matriz):
+    #Calculan el numero de filas y columnas
+    filas = len(matriz)
+    columnas = len(matriz[0])
+    
+    #Crea una matriz que se utiliza para sabes que celdas ya se han visitado durante la busqueda
+    visitado = [[False for _ in range(columnas)] for _ in range(filas)]
+    
+    #Inicializa una lista vacia donde almacenera las coordenadas de la ruta a seguir
+    ruta = []
+    
+    #Llaman a la funcion buscar_salida para encontrar una salida desde la posicion (0,0) hasta la ultima fila y columna
+    if buscar_salida(matriz, visitado, ruta, 0, 0, filas - 1, columnas - 1):
+        #Invierte la lista antes de imprimir
+        for fila, columna in(ruta):  
+            if matriz[fila][columna] == 111:
+                trivia()
+            elif matriz[fila][columna] == 55:
+                adivina()
+            print(f"({fila}, {columna})")
+                
+        print("¡Has llegado a la salida!")
+    else:
+        print("No se encontró una ruta hacia la salida.")
+    
+    return ruta  # Devolver la ruta encontrada o una lista vacía si no se encontró ruta
+            
+
+def mover_jugador(dx, dy, laberinto, jugador_posicion):
+    nueva_fila = jugador_posicion[0] + dx
+    nueva_columna = jugador_posicion[1] + dy
+
+    # Verificar si la nueva posición está dentro de los límites del laberinto y no es una pared
+    if 0 <= nueva_fila < len(laberinto) and 0 <= nueva_columna < len(laberinto[0]) and laberinto[nueva_fila][nueva_columna] != 1:
+        # Actualizar la posición del jugador
+        jugador_posicion[0] = nueva_fila
+        jugador_posicion[1] = nueva_columna
+
+def ventana_quiz(pregunta, respuesta_correcta):
+    # Inicializar pygame
+    pygame.init()
+
+    # Configurar ventana
+    ancho_ventana = 400
+    alto_ventana = 300
+    ventana = pygame.display.set_mode((ancho_ventana, alto_ventana))
+    pygame.display.set_caption("Quiz")
+
+    # Fondo de la ventana
+    ventana.fill(BLANCO)
+
+    # Fuente de texto
+    fuente = pygame.font.SysFont(None, 30)
+
+    # Texto de la pregunta
+    texto_pregunta = fuente.render(pregunta, True, NEGRO)
+    rect_texto = texto_pregunta.get_rect(center=(ancho_ventana // 2, alto_ventana // 2 - 30))
+    
+    # Dibujar el texto de la pregunta en la ventana
+    ventana.blit(texto_pregunta, rect_texto)
+
+    # Texto de instrucción
+    texto_instruccion = fuente.render("Responde escribiendo la respuesta y presiona Enter", True, NEGRO)
+    rect_instruccion = texto_instruccion.get_rect(center=(ancho_ventana // 2, alto_ventana // 2 + 30))
+    
+    # Dibujar el texto de instrucción en la ventana
+    ventana.blit(texto_instruccion, rect_instruccion)
+
+    pygame.display.update()
+
+    respuesta_ingresada = ""  # Inicializar la variable respuesta_ingresada
+
+    respuesta_correcta = respuesta_correcta.lower()  # Convertir respuesta a minúsculas
+
+    # Bucle de eventos
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return  # Salir del bucle si el jugador presiona Enter
+                elif event.key == pygame.K_BACKSPACE:
+                    # Eliminar el último carácter ingresado
+                    respuesta_ingresada = respuesta_ingresada[:-1]
+                else:
+                    respuesta_ingresada += event.unicode  # Agregar carácter ingresado
+
+        # Verificar si la respuesta ingresada es la correcta
+        if respuesta_ingresada.lower() == respuesta_correcta:
+            return True  # Si la respuesta es correcta, retornar True
+
+        pygame.display.update()
+
+def main():
+    # Dimensiones del laberinto
+    filas = 12
+    columnas = 12
+    ancho_celda = 50
+    grosor_linea = 2
+
+    # Iniciar pygame
+    pygame.init()
+
+    # Configurar ventana
+    ancho_ventana = columnas * ancho_celda
+    alto_ventana = filas * ancho_celda + 100  # Añadir espacio para el botón
+    ventana = pygame.display.set_mode((ancho_ventana, alto_ventana))
+    pygame.display.set_caption("Laberinto")
+
+    # Generar laberinto inicial
+    laberinto_personalizado = crear_matriz(filas, columnas)
+
+    # Posición inicial del jugador
+    jugador_posicion = [0, 0]
+
+    # Obtener ruta desde la entrada hasta la salida
+    ruta = ruta_salida(laberinto_personalizado)
+
+    # Bucle principal
+    jugando = True
+    paso_ruta = 0  # Índice para seguir la ruta automáticamente
+    while jugando:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                jugando = False
+
+        # Avanzar automáticamente siguiendo la ruta
+        if paso_ruta < len(ruta):
+            nueva_fila, nueva_columna = ruta[paso_ruta]
+            jugador_posicion = [nueva_fila, nueva_columna]
+            paso_ruta += 1
+
+        # Dibujar laberinto
+        ventana.fill(BLANCO)
+        for i in range(filas):
+            for j in range(columnas):
+                # Dibujar celdas con diferentes colores según su contenido
+                if laberinto_personalizado[i][j] == 1:
+                    pygame.draw.rect(ventana, NEGRO, (j * ancho_celda, i * ancho_celda, ancho_celda, ancho_celda))
+                elif laberinto_personalizado[i][j] == 2:
+                    pygame.draw.rect(ventana, ROJO, (j * ancho_celda, i * ancho_celda, ancho_celda, ancho_celda))
+                elif laberinto_personalizado[i][j] == 0:
+                    pygame.draw.rect(ventana, GRIS, (j * ancho_celda, i * ancho_celda, ancho_celda, ancho_celda))
+                elif laberinto_personalizado[i][j] == 111:  # Color para preguntas
+                    pygame.draw.rect(ventana, AMARILLO, (j * ancho_celda, i * ancho_celda, ancho_celda, ancho_celda))
+                elif laberinto_personalizado[i][j] == 55:  # Color para tribias
+                    pygame.draw.rect(ventana, AMARILLO, (j * ancho_celda, i * ancho_celda, ancho_celda, ancho_celda))
+                elif laberinto_personalizado[i][j] == 3:
+                    pygame.draw.rect(ventana, AZUL, (j * ancho_celda, i * ancho_celda, ancho_celda, ancho_celda))
+                elif laberinto_personalizado[i][j] == 4:
+                    pygame.draw.rect(ventana, CIAN, (j * ancho_celda, i * ancho_celda, ancho_celda, ancho_celda))
+
+                # Dibujar líneas horizontales
+                pygame.draw.line(ventana, NEGRO, (j * ancho_celda, i * ancho_celda), ((j + 1) * ancho_celda, i * ancho_celda), grosor_linea)
+                pygame.draw.line(ventana, NEGRO, (j * ancho_celda, (i + 1) * ancho_celda), ((j + 1) * ancho_celda, (i + 1) * ancho_celda), grosor_linea)
+                # Dibujar líneas verticales
+                pygame.draw.line(ventana, NEGRO, (j * ancho_celda, i * ancho_celda), (j * ancho_celda, (i + 1) * ancho_celda), grosor_linea)
+                pygame.draw.line(ventana, NEGRO, ((j + 1) * ancho_celda, i * ancho_celda), ((j + 1) * ancho_celda, (i + 1) * ancho_celda), grosor_linea)
+
+        # Dibujar jugador
+        pygame.draw.rect(ventana, VERDE, (jugador_posicion[1] * ancho_celda, jugador_posicion[0] * ancho_celda, ancho_celda, ancho_celda))
+
+        pygame.time.delay(100)  # Pausa para visualizar los movimientos del jugador
+
+        pygame.display.update()
+
+    pygame.quit()
+
+
+
+if __name__ == "__main__":
+    main()
+
